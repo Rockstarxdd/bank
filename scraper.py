@@ -3,6 +3,7 @@ from pyrogram import Client, filters
 from config import API_ID, API_HASH, GROUP_CHAT_ID
 import os
 
+# Session name: user_scraper_session (auto saved after login)
 app = Client("user_scraper_session", api_id=API_ID, api_hash=API_HASH)
 
 @app.on_message(filters.private & filters.command("scr"))
@@ -15,7 +16,7 @@ async def scrap(client, message):
     await message.reply_text(f"Scraping messages with keyword: **{keyword}**\nPlease wait...")
 
     msgs = []
-    async for msg in client.iter_history(GROUP_CHAT_ID):
+    async for msg in client.get_chat_history(GROUP_CHAT_ID):
         if msg.text and keyword.lower() in msg.text.lower():
             msgs.append(msg.text)
 
@@ -30,5 +31,5 @@ async def scrap(client, message):
     await message.reply_document(filename, caption=f"Results for '{keyword}'")
     os.remove(filename)
 
-print("Running userbot...")
+print("Userbot started...")
 app.run()
